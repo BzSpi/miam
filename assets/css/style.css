@@ -1,0 +1,50 @@
+html, body, .row-fluid, #list, #map  {
+  height: 100%;
+}
+
+#navbar {
+  margin: 0;
+  position: relative;
+  /*top: 42px;*/
+}
+
+#container {
+  height: 100%;
+  padding: 0 0 0 0;
+  padding-bottom: 42px;
+}
+
+#map {
+  width: 76.595744680851066%;
+  margin-left: 0;
+  /*display: inline-block;*/
+}
+
+@media (min-width: 1200px) {
+  #map {
+   width: 76.923076923076923%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+  #map {
+   width: 77.07182320441989%;
+  }
+}
+
+@media (max-width: 767px) {
+  html, body {
+    padding: 0;
+  }
+
+  #map {
+   width: 100%;
+   margin-left: 0;
+  }
+  
+}
+
+/* Fix for Google Maps with Twitter bootstrap */
+#map img {
+  max-width: none; 
+}
