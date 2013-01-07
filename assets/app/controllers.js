@@ -22,7 +22,7 @@ function($scope, $element, navigator, Place) {
   var mapElt = $element.find('#map')[0];
   var mapOptions = {
     center: new google.maps.LatLng(-34.397, 150.644),
-    zoom: 8,
+    zoom: 14,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
@@ -33,6 +33,10 @@ function($scope, $element, navigator, Place) {
             position: new google.maps.LatLng(place.lat, place.lng),
             map: $scope.map,
             title: place.name
+        });
+        google.maps.event.addListener(marker, 'click', function() {
+          $scope.selectPlace(place);
+          $scope.$apply();
         });
       place.marker = marker;
     });
