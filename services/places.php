@@ -8,6 +8,7 @@ $places = array(
     'name' => 'Houblon & Sarazin',
     'description' => 'C\'est la crêperie',
     'type' => PlaceTypeEnum::RESTAURANT,
+    'link' => '',
     'lat' => 48.869316,
     'lng' => 2.356610
   ),
@@ -16,6 +17,7 @@ $places = array(
     'name' => 'Les fils du soleil',
     'description' => 'C\'est le mexicain qui est en fait un colombien',
     'type' => PlaceTypeEnum::MEXICAN,
+    'link' => '',
     'lat' => 48.869076,
     'lng' => 2.358198
   ),
@@ -24,6 +26,7 @@ $places = array(
     'name' => 'Renaissance',
     'description' => 'Une brasserie sympathique',
     'type' => PlaceTypeEnum::BRASSERIE,
+    'link' => '',
     'lat' => 48.869182,
     'lng' => 2.356095
   ),
@@ -32,6 +35,7 @@ $places = array(
     'name' => 'Pause croissant',
     'description' => 'Le salad bar',
     'type' => PlaceTypeEnum::FASTFOOD,
+    'link' => '',
     'lat'  => 48.868371,
     'lng'  => 2.359968
   ),
@@ -40,6 +44,7 @@ $places = array(
     'name' => 'Mc Donald\'s',
     'description' => 'McDo pour les intimes',
     'type' => PlaceTypeEnum::FASTFOOD,
+    'link' => 'http://www.mcdonalds.fr/',
     'lat' => 48.867721,
     'lng' => 2.362543
   ),
@@ -48,6 +53,7 @@ $places = array(
     'name' => 'Le vernissoir',
     'description' => 'On mange bien',
     'type' => PlaceTypeEnum::GOURMET,
+    'link' => '',
     'lat' => 48.866790,
     'lng' => 2.359110
   ),
