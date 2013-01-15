@@ -8,7 +8,7 @@ foreach($typeClass->getConstants() as $cst)
 {
   $types[] = (object) array(
     'identifier' => $cst,
-    'name'       => $cst
+    'name'       => ucfirst($cst)
   );
 }
 

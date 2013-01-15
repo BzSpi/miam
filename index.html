@@ -54,13 +54,14 @@
       <div class="row-fluid">
         <div id="list" class="span3">
           <div class="well sidebar-nav">
-            Search: <input ng-model="placeFilter.$" />
-            <br />
-            Type : <select ng-model="placeFilter.type">
-              <option  value="" ng-model="placeFilter.type"/></option>
-              <option ng-repeat="placeType in placeTypes" value="{{ placeType.identifier }}" ng-model="placeFilter.type"/>{{ placeType.name }}</option>
-            </select>
-            <ul class="nav nav-list">
+            <div ng-controller="SearchCtrl">
+              Search: <input ng-model="placeFilter.$" />
+              <br />
+              Type : <select ng-model="placeFilter.type" ng-options="placeType.identifier as placeType.name for placeType in placeTypes">
+                <option value="">-- filter by place type --</option>
+              </select>
+            </div>
+            <ul class="nav nav-list" ng-controller="PlacesListCtrl">
               <li ng-repeat="place in places | filter:placeFilter">
                 <a href="#/places/{{ place.id }}" ng-click="selectPlace(place)"><img ng-src="assets/img/icons/places/classic/{{place.type}}.png" alt="{{ place.type }}" /> {{ place.name }}</a>
                 <small>{{ place.type }}</small>
@@ -85,7 +86,26 @@
             <input type="button" class="btn" value="Add" ng-click="addPlace()" />
           </div><!--/.well -->
         </div><!--/span-->
-        <div id="map" class="span9">
+        <div id="map" class="span9" ng-controller="MapCtrl">
+          <div class="map"></div>
+          <div class="templates" style="display: none;">
+            <script type="text/ng-template" id="infoWindow">
+              <div>
+                <div class="modal-header">
+                  <!--button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button-->
+                  <h3><img ng-src="assets/img/icons/places/classic/{{selectedPlace.type}}.png" alt="{{ selectedPlace.type }}" /> {{ selectedPlace.name }}</h3>
+                </div>
+                <div class="modal-body">
+                  <p>{{ selectedPlace.description }}</p>
+                  <a ng-show="selectedPlace.link != ''" href="{{ selectedPlace.link }}" target="_blank">{{ selectedPlace.link }}</a>
+                </div>
+                <div class="modal-footer">
+                  <!--a href="#" class="btn">Close</a-->
+                  <a href="#" class="btn btn-primary" ng-click="editPlace(selectedPlace)">Edit</a>
+                </div>
+              </div>
+            </script>
+          </div>
         </div><!--/span-->
       </div><!--/row-->
 
@@ -96,20 +116,64 @@
       </footer-->
 
     </div><!--/.fluid-container-->
-    
-    <div id="templates" style="display: none;">
-      <div id="infoWindow">
-        <h2 ng-bind="currentPlace.data.name"></h2>
-        <p ng-bind="currentPlace.data.description"></p>
+
+    <!-- Modal -->
+    <form id="editModal" class="modal hide fade form-horizontal" action='' method="POST" tabindex="-1" role="dialog" aria-labelledby="Edit modal" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Add</h3>
       </div>
-    </div>
+      <div class="modal-body">
+        <fieldset>
+          <div class="control-group">
+            <!-- Name -->
+            <label class="control-label" for="name">Name</label>
+            <div class="controls">
+              <input type="text" id="name" name="name" placeholder="" class="input-xlarge" ng-model="formPlace.name">
+              <p class="help-block">Username can contain any letters or numbers, without spaces</p>
+            </div>
+          </div>
+     
+          <div class="control-group">
+            <!-- Description -->
+            <label class="control-label" for="description">Description</label>
+            <div class="controls">
+              <textarea id="description" name="description" placeholder="" class="input-xlarge"ng-model="formPlace.description"></textarea>
+              <p class="help-block">Please provide your E-mail</p>
+            </div>
+          </div>
+     
+          <div class="control-group">
+            <!-- Link -->
+            <label class="control-label" for="password">Link</label>
+            <div class="controls">
+              <input type="text" id="link" name="link" placeholder="" class="input-xlarge" ng-model="formPlace.link">
+              <p class="help-block">Password should be at least 4 characters</p>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <!-- Type -->
+            <label class="control-label" for="type">Type</label>
+            <div class="controls">
+              <select id="type" name="type" ng-model="formPlace.type" ng-options="placeType.identifier as placeType.name for placeType in placeTypes"></select>
+              <p class="help-block">Please confirm password</p>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn btn-primary" data-dismiss="modal"  ng-click="savePlace(formPlace)">Save changes</button>
+      </div>
+    </form>
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular-resource.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular-resource.js"></script>
     <script src="//maps.googleapis.com/maps/api/js?sensor=true"></script>
     <script src="assets/app/app.js"></script>
     <script src="assets/app/services.js"></script>
