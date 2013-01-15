@@ -30,6 +30,7 @@ function($rootScope, Place) {
   $rootScope.editPlace = function(place) {
     console.info('$rootScope - editPlace()');
     $rootScope.editedPlace = place;
+    // We don't use angular.copy, because of marker object
     $rootScope.formPlace = {
       id: place.id,
       name: place.name,
@@ -78,7 +79,12 @@ function($scope) {
 
 var SearchCtrl = ['$scope', '$rootScope',
 function($scope, $rootScope) {
-  
+  $scope.$watch('placeFilter', function(newPlaceFilter, oldPlaceFilter, $scope) {
+    console.info('SearchCtrl - placeFilter changed');
+    if(newPlaceFilter.type === null) {
+      delete $scope.placeFilter.type;
+    }
+  }, true);
 }];
 
 var MapCtrl = ['$scope', '$element', '$compile', '$templateCache', 'navigator',
@@ -105,7 +111,6 @@ function($scope, $element, $compile, $templateCache, navigator) {
   $scope.selectedPlace = null;
 
   // Initializing communication
-  console.info('MapCtrl - $scope.$on(placeAdded)');
   $scope.$on('placeAdded', function(e, place) {
     console.info('MapCtrl - placeAdded');
     $scope.addPlaceMarker(place);
@@ -129,7 +134,9 @@ function($scope, $element, $compile, $templateCache, navigator) {
     var marker = new google.maps.Marker({
           position: new google.maps.LatLng(place.lat, place.lng),
           map: $scope.map,
-          title: place.name
+          title: place.name,
+          icon: 'assets/img/icons/places/pointer/' + place.type + '.png',
+          shadow: 'assets/img/icons/places/pointer/shadow.png'
     });
     google.maps.event.addListener(marker, 'click', function() {
       $scope.selectPlace(place);
