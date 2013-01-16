@@ -18,13 +18,18 @@ function($rootScope, Place) {
   /***********************
    * Functions
    ***********************/
-  $rootScope.addPlace = function() {
+  /*$rootScope.addPlace = function() {
     this.places.push({
       id: 42,
       name: 'Test',
       description: 'Test',
       type: 'fastfood'
     });
+  };*/
+
+  $rootScope.addPlace = function() {
+    console.info('$rootScope - addPlace()');
+    $rootScope.$broadcast('placeAdd');
   };
 
   $rootScope.editPlace = function(place) {
@@ -57,8 +62,8 @@ function($scope) {
   });
 }];
 
-var SearchCtrl = ['$scope', '$rootScope',
-function($scope, $rootScope) {
+var SearchCtrl = ['$scope',
+function($scope) {
   $scope.$watch('placeFilter', function(newPlaceFilter, oldPlaceFilter, $scope) {
     console.info('SearchCtrl - placeFilter changed');
     if(newPlaceFilter.type === null) {
@@ -69,7 +74,8 @@ function($scope, $rootScope) {
 
 var PlaceEditCtrl = ['$scope', '$element',
 function($scope, $element) {
-  console.info('PlaceEditCtrl');
+  $element.on('hidden', function() { $scope.cancel(); });
+
   $scope.$on('placeEdit', function(e, place) {
     console.info('PlaceEditCtrl - placeEdit');
     // We don't use angular.copy, because of marker object
@@ -84,10 +90,17 @@ function($scope, $element) {
     $element.modal('show');
   });
 
+  $scope.cancel = function() {
+    console.info('PlaceEditCtrl - cancel()');
+    $scope.$broadcast('placeEditCancel', $scope.editPlace);
+  };
+
   $scope.save = function() {
     console.info('PlaceEditCtrl - save()');
     angular.extend($scope.editPlace, $scope.formPlace);
     // TODO : manage icon change in map
+    $element.modal('hide');
+    $scope.$broadcast('placeEdited', $scope.editPlace);
   };
 }];
 

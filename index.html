@@ -121,7 +121,7 @@
     <form name="editForm" ng-controller="PlaceEditCtrl" class="modal hide fade form-horizontal" action='' method="POST" tabindex="-1" role="dialog" aria-labelledby="Edit modal" aria-hidden="true">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Add</h3>
+        <h3 id="myModalLabel">Edit</h3>
       </div>
       <div class="modal-body">
         <fieldset>
@@ -164,7 +164,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary" data-dismiss="modal" ng-disabled="editForm.$invalid" ng-click="save()">Save changes</button>
+        <button class="btn btn-primary" ng-disabled="editForm.$invalid" ng-click="save()">Save changes</button>
       </div>
     </form>
     <!-- Le javascript
