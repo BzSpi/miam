@@ -6,7 +6,7 @@
 var MiamCtrl = ['$rootScope', 'Place',
 function($rootScope, Place) {
   $rootScope.places = Place.query({}, function(places) {
-    console.info('Place.query success');
+    console.info('Place.query() success');
     angular.forEach(places, function(place) { 
       $rootScope.$broadcast('placeAdded', place);
     });
@@ -18,15 +18,6 @@ function($rootScope, Place) {
   /***********************
    * Functions
    ***********************/
-  /*$rootScope.addPlace = function() {
-    this.places.push({
-      id: 42,
-      name: 'Test',
-      description: 'Test',
-      type: 'fastfood'
-    });
-  };*/
-
   $rootScope.addPlace = function() {
     console.info('$rootScope - addPlace()');
     $rootScope.$broadcast('placeAdd');
@@ -113,7 +104,7 @@ function($scope, $element, $compile, $templateCache, navigator) {
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
-  $scope.map = new google.maps.Map(mapElt, mapOptions); 
+  $scope.map = new google.maps.Map(mapElt, mapOptions);
 
   // Center on user location if available
   if(navigator.geolocation) {
@@ -121,6 +112,8 @@ function($scope, $element, $compile, $templateCache, navigator) {
       $scope.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
     });
   }
+
+  $scope.markers = [];
 
   $scope.infoWindow = new google.maps.InfoWindow({
     content: angular.element($templateCache.get('infoWindow'))[0]
@@ -143,7 +136,13 @@ function($scope, $element, $compile, $templateCache, navigator) {
       $scope.infoWindow.close();
 
     $compile($scope.infoWindow.getContent())($scope);
-    $scope.infoWindow.open($scope.map, place.marker);
+    
+    for(var i=0 ; i<$scope.markers.length ; i++) {
+      if($scope.markers[i].place.id === place.id) {
+        $scope.infoWindow.open($scope.map, $scope.markers[i].marker);
+        break;
+      }
+    }
   });
 
   $scope.addPlaceMarker = function(place) {
@@ -159,6 +158,6 @@ function($scope, $element, $compile, $templateCache, navigator) {
       $scope.selectPlace(place);
       $scope.$apply();
     });
-    place.marker = marker;
+    $scope.markers.push({place: place, marker: marker});
   };
 }];
