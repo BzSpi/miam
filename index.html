@@ -118,7 +118,7 @@
     </div><!--/.fluid-container-->
 
     <!-- Modal -->
-    <form id="editModal" class="modal hide fade form-horizontal" action='' method="POST" tabindex="-1" role="dialog" aria-labelledby="Edit modal" aria-hidden="true">
+    <form name="editForm" ng-controller="PlaceEditCtrl" class="modal hide fade form-horizontal" action='' method="POST" tabindex="-1" role="dialog" aria-labelledby="Edit modal" aria-hidden="true">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
         <h3 id="myModalLabel">Add</h3>
@@ -129,7 +129,7 @@
             <!-- Name -->
             <label class="control-label" for="name">Name</label>
             <div class="controls">
-              <input type="text" id="name" name="name" placeholder="" class="input-xlarge" ng-model="formPlace.name">
+              <input type="text" id="name" name="name" required placeholder="" class="input-xlarge" ng-model="formPlace.name">
               <p class="help-block">Username can contain any letters or numbers, without spaces</p>
             </div>
           </div>
@@ -138,7 +138,7 @@
             <!-- Description -->
             <label class="control-label" for="description">Description</label>
             <div class="controls">
-              <textarea id="description" name="description" placeholder="" class="input-xlarge"ng-model="formPlace.description"></textarea>
+              <textarea id="description" name="description" required placeholder="" class="input-xlarge"ng-model="formPlace.description"></textarea>
               <p class="help-block">Please provide your E-mail</p>
             </div>
           </div>
@@ -156,7 +156,7 @@
             <!-- Type -->
             <label class="control-label" for="type">Type</label>
             <div class="controls">
-              <select id="type" name="type" ng-model="formPlace.type" ng-options="placeType.identifier as placeType.name for placeType in placeTypes"></select>
+              <select id="type" name="type" ng-model="formPlace.type" required ng-options="placeType.identifier as placeType.name for placeType in placeTypes"></select>
               <p class="help-block">Please confirm password</p>
             </div>
           </div>
@@ -164,7 +164,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary" data-dismiss="modal"  ng-click="savePlace(formPlace)">Save changes</button>
+        <button class="btn btn-primary" data-dismiss="modal" ng-disabled="editForm.$invalid" ng-click="save()">Save changes</button>
       </div>
     </form>
     <!-- Le javascript

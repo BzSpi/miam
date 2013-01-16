@@ -29,31 +29,12 @@ function($rootScope, Place) {
 
   $rootScope.editPlace = function(place) {
     console.info('$rootScope - editPlace()');
-    $rootScope.editedPlace = place;
-    // We don't use angular.copy, because of marker object
-    $rootScope.formPlace = {
-      id: place.id,
-      name: place.name,
-      description : place.description,
-      link: place.link,
-      type: place.type
-    };
-    //$rootScope.formPlace = place;
-    jQuery('#editModal').modal('show');
+    $rootScope.$broadcast('placeEdit', place);
   };
 
   $rootScope.selectPlace = function(place) {
     console.info('$rootScope - selectPlace()');
     $rootScope.$broadcast('placeSelected', place);
-  };
-
-  $rootScope.savePlace = function(place) {
-    console.info('$rootScope - savePlace()');
-    //$rootScope.editedPlace = place;
-    $rootScope.editedPlace.name = place.name;
-    $rootScope.editedPlace.description = place.description;
-    $rootScope.editedPlace.link = place.link;
-    $rootScope.editedPlace.type = place.type;
   };
 
   /*$rootScope.$safeApply = function($scope, fn) {
@@ -68,7 +49,6 @@ function($rootScope, Place) {
     }
   };*/
 }];
-
 
 var PlacesListCtrl = ['$scope',
 function($scope) {
@@ -85,6 +65,30 @@ function($scope, $rootScope) {
       delete $scope.placeFilter.type;
     }
   }, true);
+}];
+
+var PlaceEditCtrl = ['$scope', '$element',
+function($scope, $element) {
+  console.info('PlaceEditCtrl');
+  $scope.$on('placeEdit', function(e, place) {
+    console.info('PlaceEditCtrl - placeEdit');
+    // We don't use angular.copy, because of marker object
+    $scope.editPlace = place;
+    $scope.formPlace = {
+      id: place.id,
+      name: place.name,
+      description : place.description,
+      link: place.link,
+      type: place.type
+    };
+    $element.modal('show');
+  });
+
+  $scope.save = function() {
+    console.info('PlaceEditCtrl - save()');
+    angular.extend($scope.editPlace, $scope.formPlace);
+    // TODO : manage icon change in map
+  };
 }];
 
 var MapCtrl = ['$scope', '$element', '$compile', '$templateCache', 'navigator',
