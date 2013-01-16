@@ -1,8 +1,8 @@
 'use strict';
  
-/**
- * Controller for places list
- */
+/***********************
+ * Main controller
+ ***********************/
 var MiamCtrl = ['$rootScope', 'Place',
 function($rootScope, Place) {
   $rootScope.places = Place.query({}, function(places) {
@@ -46,6 +46,9 @@ function($rootScope, Place) {
   };*/
 }];
 
+/***********************
+ * Place list controller
+ ***********************/
 var PlacesListCtrl = ['$scope',
 function($scope) {
   $scope.$on('placeSelected', function(e, place) {
@@ -53,6 +56,9 @@ function($scope) {
   });
 }];
 
+/***********************
+ * Search controller
+ ***********************/
 var SearchCtrl = ['$scope',
 function($scope) {
   $scope.$watch('placeFilter', function(newPlaceFilter, oldPlaceFilter, $scope) {
@@ -63,38 +69,45 @@ function($scope) {
   }, true);
 }];
 
-var PlaceEditCtrl = ['$scope', '$element',
-function($scope, $element) {
-  $element.on('hidden', function() { $scope.cancel(); });
+/***********************
+ * Edition controller
+ ***********************/
+var PlaceEditCtrl = ['$scope', '$element', '$rootScope',
+function($scope, $element, $rootScope) {
+  $scope.cancelFunc = function() { $scope.cancel(); };
 
+  /***********************
+   * Events
+   ***********************/
   $scope.$on('placeEdit', function(e, place) {
     console.info('PlaceEditCtrl - placeEdit');
-    // We don't use angular.copy, because of marker object
     $scope.editPlace = place;
-    $scope.formPlace = {
-      id: place.id,
-      name: place.name,
-      description : place.description,
-      link: place.link,
-      type: place.type
-    };
+    $scope.formPlace = angular.copy(place);
+    $element.on('hide', $scope.cancelFunc);
     $element.modal('show');
   });
 
+  /***********************
+   * Functions
+   ***********************/
   $scope.cancel = function() {
     console.info('PlaceEditCtrl - cancel()');
-    $scope.$broadcast('placeEditCancel', $scope.editPlace);
+    $element.off('hide', $scope.cancelFunc);
+    $rootScope.$broadcast('placeEditCancel', $scope.editPlace);
   };
 
   $scope.save = function() {
     console.info('PlaceEditCtrl - save()');
     angular.extend($scope.editPlace, $scope.formPlace);
-    // TODO : manage icon change in map
+    $element.off('hide', $scope.cancelFunc);
     $element.modal('hide');
-    $scope.$broadcast('placeEdited', $scope.editPlace);
+    $rootScope.$broadcast('placeEdited', $scope.editPlace);
   };
 }];
 
+/***********************
+ * Map Controller
+ ***********************/
 var MapCtrl = ['$scope', '$element', '$compile', '$templateCache', 'navigator',
 function($scope, $element, $compile, $templateCache, navigator) {
   var mapElt = $element.find('.map')[0];
@@ -120,10 +133,21 @@ function($scope, $element, $compile, $templateCache, navigator) {
   });
   $scope.selectedPlace = null;
 
-  // Initializing communication
+  /***********************
+   * Events
+   ***********************/
   $scope.$on('placeAdded', function(e, place) {
     console.info('MapCtrl - placeAdded');
     $scope.addPlaceMarker(place);
+  });
+
+  $scope.$on('placeEdited', function(e, place) {
+    console.info('MapCtrl - placeEdited');
+    var marker = $scope.findPlaceMarker(place);
+    marker.setIcon('assets/img/icons/places/pointer/' + place.type + '.png');
+    // Close and open infoWindow in order to readjust size
+    $scope.infoWindow.close();
+    $scope.infoWindow.open($scope.map);
   });
   
   $scope.$on('placeSelected', function(e, place) {
@@ -139,12 +163,15 @@ function($scope, $element, $compile, $templateCache, navigator) {
     
     for(var i=0 ; i<$scope.markers.length ; i++) {
       if($scope.markers[i].place.id === place.id) {
-        $scope.infoWindow.open($scope.map, $scope.markers[i].marker);
+        $scope.infoWindow.open($scope.map, $scope.findPlaceMarker(place));
         break;
       }
     }
   });
 
+  /***********************
+   * Functions
+   ***********************/
   $scope.addPlaceMarker = function(place) {
     console.info('MapCtrl - addPlaceMarker()');
     var marker = new google.maps.Marker({
@@ -159,5 +186,11 @@ function($scope, $element, $compile, $templateCache, navigator) {
       $scope.$apply();
     });
     $scope.markers.push({place: place, marker: marker});
+  };
+
+  $scope.findPlaceMarker = function(place) {
+    for(var i=0 ; i<$scope.markers.length ; i++)
+      if($scope.markers[i].place.id === place.id)
+        return $scope.markers[i].marker;
   };
 }];

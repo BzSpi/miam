@@ -49,7 +49,7 @@ $places = array(
     'lng' => 2.362543
   ),
   (object) array(
-    'id'  => 5,
+    'id'  => 6,
     'name' => 'Le vernissoir',
     'description' => 'On mange bien',
     'type' => PlaceTypeEnum::GOURMET,
