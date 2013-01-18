@@ -59,13 +59,18 @@ function($scope) {
 /***********************
  * Search controller
  ***********************/
-var SearchCtrl = ['$scope',
-function($scope) {
+var SearchCtrl = ['$scope', '$rootScope',
+function($scope, $rootScope) {
   $scope.$watch('placeFilter', function(newPlaceFilter, oldPlaceFilter, $scope) {
     console.info('SearchCtrl - placeFilter changed');
     if(newPlaceFilter.type === null) {
       delete $scope.placeFilter.type;
     }
+    $rootScope.$broadcast('placeFilterChanged', newPlaceFilter);
+  }, true);
+  $scope.$watch('placeFilter.$', function(newPlaceFilter, oldPlaceFilter, $scope) {
+    console.info('SearchCtrl - placeFilter.$');
+    $rootScope.$broadcast('placeFilterChanged', $scope.placeFilter);
   }, true);
 }];
 
@@ -108,8 +113,8 @@ function($scope, $element, $rootScope) {
 /***********************
  * Map Controller
  ***********************/
-var MapCtrl = ['$scope', '$element', '$compile', '$templateCache', 'navigator',
-function($scope, $element, $compile, $templateCache, navigator) {
+var MapCtrl = ['$scope', '$element', '$compile', '$templateCache', 'navigator', '$filter',
+function($scope, $element, $compile, $templateCache, navigator, $filter) {
   var mapElt = $element.find('.map')[0];
   var mapOptions = {
     center: new google.maps.LatLng(-34.397, 150.644),
@@ -147,7 +152,7 @@ function($scope, $element, $compile, $templateCache, navigator) {
     marker.setIcon('assets/img/icons/places/pointer/' + place.type + '.png');
     // Close and open infoWindow in order to readjust size
     $scope.infoWindow.close();
-    $scope.infoWindow.open($scope.map);
+    $scope.infoWindow.open($scope.map, marker);
   });
   
   $scope.$on('placeSelected', function(e, place) {
@@ -167,6 +172,17 @@ function($scope, $element, $compile, $templateCache, navigator) {
         break;
       }
     }
+  });
+
+  $scope.$on('placeFilterChanged', function(e, placeFilter) {
+    console.info('MapCtrl - placeFilterChanged');
+    for(var i=0 ; i<$scope.markers.length ; i++) {
+      if($filter('filter')([$scope.markers[i].place], placeFilter).length > 0) {
+        $scope.markers[i].marker.setVisible(true);
+      } else {
+        $scope.markers[i].marker.setVisible(false);
+      }
+    };
   });
 
   /***********************
