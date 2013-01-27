@@ -160,6 +160,8 @@ function($scope, $compile, $templateCache, $filter) {
   $scope.$on('placeSelected', function(e, place) {
     console.info('MapCtrl - placeSelected');
 
+    $scope.selectedPlace = place;
+
     if(!$scope.map)
       return;
     if($scope.infoWindow)
@@ -168,7 +170,6 @@ function($scope, $compile, $templateCache, $filter) {
     if(place === null)
       return;
 
-    $scope.selectedPlace = place;
     $compile($scope.infoWindow.getContent())($scope);
     
     for(var i=0 ; i<$scope.markers.length ; i++) {
