@@ -14,6 +14,19 @@ html, body, .row-fluid, #list, #map  {
   padding-bottom: 42px;
 }
 
+#list .nav-list .odd {
+  background-color: #f9f9f9;
+}
+
+#list .nav-list img {
+  float: left;
+  margin-right: 10px;
+}
+
+#list .nav-list small {
+  display: block;
+}
+
 #map {
   width: 76.595744680851066%;
   margin-left: 0;
@@ -52,4 +65,12 @@ html, body, .row-fluid, #list, #map  {
 /* Fix for Google Maps with Twitter bootstrap */
 #map img {
   max-width: none; 
+}
+
+#map .infoWindow h3 {
+  line-height: 37px;
+}
+
+#map .infoWindow h3 img {
+  vertical-align: text-bottom;
 }

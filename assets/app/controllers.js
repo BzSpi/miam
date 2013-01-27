@@ -3,8 +3,8 @@
 /***********************
  * Main controller
  ***********************/
-var MiamCtrl = ['$rootScope', 'Place',
-function($rootScope, Place) {
+var MiamCtrl = ['$rootScope', 'Place', '$scope',
+function($rootScope, Place, $scope) {
   $rootScope.places = Place.query({}, function(places) {
     console.info('Place.query() success');
     angular.forEach(places, function(place) { 
@@ -33,6 +33,17 @@ function($rootScope, Place) {
     $rootScope.$broadcast('placeSelected', place);
   };
 
+  /***********************
+   * Events
+   ***********************/
+  $rootScope.$watch('addMode', function(newValue) {
+    console.log('$rootScope - addMode '+newValue);
+  });
+
+  $scope.$watch('addMode', function(newValue) {
+    console.log('$scope - addMode '+newValue);
+  });
+
   /*$rootScope.$safeApply = function($scope, fn) {
     console.info('$rootScope - $safeApply()');
     $scope = $scope || $rootScope;
@@ -51,8 +62,11 @@ function($rootScope, Place) {
  ***********************/
 var PlacesListCtrl = ['$scope',
 function($scope) {
+  $scope.selectedPlaceId = null;
+  
   $scope.$on('placeSelected', function(e, place) {
     console.info('PlacesListCtrl - placeSelected');
+    $scope.selectedPlaceId = place !== null ? place.id : null;
   });
 }];
 
@@ -113,30 +127,18 @@ function($scope, $element, $rootScope) {
 /***********************
  * Map Controller
  ***********************/
-var MapCtrl = ['$scope', '$element', '$compile', '$templateCache', 'navigator', '$filter',
-function($scope, $element, $compile, $templateCache, navigator, $filter) {
-  var mapElt = $element.find('.map')[0];
-  var mapOptions = {
-    center: new google.maps.LatLng(-34.397, 150.644),
-    zoom: 14,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  };
-
-  $scope.map = new google.maps.Map(mapElt, mapOptions);
-
-  // Center on user location if available
-  if(navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      $scope.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
-    });
-  }
-
+var MapCtrl = ['$scope', '$compile', '$templateCache', '$filter',
+function($scope, $compile, $templateCache, $filter) {
   $scope.markers = [];
+  $scope.selectedPlace = null;
 
   $scope.infoWindow = new google.maps.InfoWindow({
     content: angular.element($templateCache.get('infoWindow'))[0]
   });
-  $scope.selectedPlace = null;
+  google.maps.event.addListener($scope.infoWindow, 'closeclick', function() {
+    $scope.selectPlace(null);
+    $scope.$apply();
+  });
 
   /***********************
    * Events
@@ -150,20 +152,23 @@ function($scope, $element, $compile, $templateCache, navigator, $filter) {
     console.info('MapCtrl - placeEdited');
     var marker = $scope.findPlaceMarker(place);
     marker.setIcon('assets/img/icons/places/pointer/' + place.type + '.png');
-    // Close and open infoWindow in order to readjust size
+    // Close and open infoWindow in order to readjust its size
     $scope.infoWindow.close();
     $scope.infoWindow.open($scope.map, marker);
   });
   
   $scope.$on('placeSelected', function(e, place) {
     console.info('MapCtrl - placeSelected');
-    $scope.selectedPlace = place;
 
     if(!$scope.map)
       return;
     if($scope.infoWindow)
       $scope.infoWindow.close();
 
+    if(place === null)
+      return;
+
+    $scope.selectedPlace = place;
     $compile($scope.infoWindow.getContent())($scope);
     
     for(var i=0 ; i<$scope.markers.length ; i++) {
@@ -178,9 +183,19 @@ function($scope, $element, $compile, $templateCache, navigator, $filter) {
     console.info('MapCtrl - placeFilterChanged');
     for(var i=0 ; i<$scope.markers.length ; i++) {
       if($filter('filter')([$scope.markers[i].place], placeFilter).length > 0) {
+        // If place should appear
         $scope.markers[i].marker.setVisible(true);
+        if($scope.selectedPlace && $scope.infoWindow && $scope.markers[i].place.id === $scope.selectedPlace.id) {
+          if(!$scope.infoWindow.getMap()) { // Check if infoWindow is opened
+            $scope.infoWindow.open($scope.map, $scope.markers[i].marker);
+          }
+        }
       } else {
+        // If place should not appear
         $scope.markers[i].marker.setVisible(false);
+        if($scope.selectedPlace && $scope.infoWindow && $scope.markers[i].place.id === $scope.selectedPlace.id) {
+          $scope.infoWindow.close();
+        }
       }
     };
   });
@@ -188,6 +203,11 @@ function($scope, $element, $compile, $templateCache, navigator, $filter) {
   /***********************
    * Functions
    ***********************/
+  /**
+   * Adds a marker on the map
+   * 
+   * @param Place place the place to add
+   */
   $scope.addPlaceMarker = function(place) {
     console.info('MapCtrl - addPlaceMarker()');
     var marker = new google.maps.Marker({
@@ -204,6 +224,11 @@ function($scope, $element, $compile, $templateCache, navigator, $filter) {
     $scope.markers.push({place: place, marker: marker});
   };
 
+  /**
+   * Finds a marker on the map from a place
+   * 
+   * @param Place place the place from which retrieve the map marker
+   */
   $scope.findPlaceMarker = function(place) {
     for(var i=0 ; i<$scope.markers.length ; i++)
       if($scope.markers[i].place.id === place.id)
