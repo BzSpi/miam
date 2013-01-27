@@ -3,8 +3,8 @@
 /***********************
  * Main controller
  ***********************/
-var MiamCtrl = ['$rootScope', 'Place', '$scope',
-function($rootScope, Place, $scope) {
+var MiamCtrl = ['$rootScope', 'Place', '$scope', 'console',
+function($rootScope, Place, $scope, console) {
   $rootScope.places = Place.query({}, function(places) {
     console.info('Place.query() success');
     angular.forEach(places, function(place) { 
@@ -36,12 +36,9 @@ function($rootScope, Place, $scope) {
   /***********************
    * Events
    ***********************/
-  $rootScope.$watch('addMode', function(newValue) {
-    console.log('$rootScope - addMode '+newValue);
-  });
-
   $scope.$watch('addMode', function(newValue) {
     console.log('$scope - addMode '+newValue);
+    $rootScope.$broadcast('addMode', newValue);
   });
 
   /*$rootScope.$safeApply = function($scope, fn) {
@@ -60,8 +57,8 @@ function($rootScope, Place, $scope) {
 /***********************
  * Place list controller
  ***********************/
-var PlacesListCtrl = ['$scope',
-function($scope) {
+var PlacesListCtrl = ['$scope', 'console',
+function($scope, console) {
   $scope.selectedPlaceId = null;
   
   $scope.$on('placeSelected', function(e, place) {
@@ -73,8 +70,8 @@ function($scope) {
 /***********************
  * Search controller
  ***********************/
-var SearchCtrl = ['$scope', '$rootScope',
-function($scope, $rootScope) {
+var SearchCtrl = ['$scope', '$rootScope', 'console',
+function($scope, $rootScope, console) {
   $scope.$watch('placeFilter', function(newPlaceFilter, oldPlaceFilter, $scope) {
     console.info('SearchCtrl - placeFilter changed');
     if(newPlaceFilter.type === null) {
@@ -91,8 +88,8 @@ function($scope, $rootScope) {
 /***********************
  * Edition controller
  ***********************/
-var PlaceEditCtrl = ['$scope', '$element', '$rootScope',
-function($scope, $element, $rootScope) {
+var PlaceEditCtrl = ['$scope', '$element', '$rootScope', 'console',
+function($scope, $element, $rootScope, console) {
   $scope.cancelFunc = function() { $scope.cancel(); };
 
   /***********************
@@ -127,8 +124,8 @@ function($scope, $element, $rootScope) {
 /***********************
  * Map Controller
  ***********************/
-var MapCtrl = ['$scope', '$compile', '$templateCache', '$filter',
-function($scope, $compile, $templateCache, $filter) {
+var MapCtrl = ['$scope', '$compile', '$templateCache', '$filter', 'console',
+function($scope, $compile, $templateCache, $filter, console) {
   $scope.markers = [];
   $scope.selectedPlace = null;
 
@@ -199,6 +196,10 @@ function($scope, $compile, $templateCache, $filter) {
         }
       }
     };
+  });
+
+  $scope.$on('addMode', function(e, addMode) {
+    console.info('MapCtrl - addMode');
   });
 
   /***********************
