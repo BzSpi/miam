@@ -1,6 +1,6 @@
 miamApp
 /** Toogle button directive */
-.directive('toggleButton', ['console', 
+.directive('toggleButton', ['console',
   function(console) {
     return function(scope, element, attrs) {
       console.info('toggleButton');
@@ -23,7 +23,7 @@ miamApp
 }])
 
 /** Google Map directive */
-.directive('googleMap', ['navigator', 'console', 
+.directive('googleMap', ['navigator', 'console',
   function(navigator, console) {
     return function(scope, element, attrs) {
       console.info('googleMap');
@@ -36,15 +36,17 @@ miamApp
       if(attrs.mapCenterZoom)
         mapOptions.zoom = parseInt(attrs.mapCenterZoom);
 
-      scope.map = new google.maps.Map(element[0], mapOptions);
+      var map = new google.maps.Map(element[0], mapOptions);
 
       if(attrs.mapCenterGeoloc && /true/i.test(attrs.mapCenterGeoloc)) {
         // Center on user location if available
         if(navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
-            scope.map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+            map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
           });
         }
       }
+
+      scope.$broadcast('mapInitialized', map);
     };
 }]);

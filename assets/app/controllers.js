@@ -1,5 +1,5 @@
 'use strict';
- 
+
 /***********************
  * Main controller
  ***********************/
@@ -7,14 +7,14 @@ var MiamCtrl = ['$rootScope', 'Place', '$scope', 'console',
 function($rootScope, Place, $scope, console) {
   $rootScope.places = Place.query({}, function(places) {
     console.info('Place.query() success');
-    angular.forEach(places, function(place) { 
+    angular.forEach(places, function(place) {
       $rootScope.$broadcast('placeAdded', place);
     });
   });
   $rootScope.placeTypes = Place.types();
   $rootScope.addMode = false;
   $rootScope.placeFilter = {};
-  
+
   /***********************
    * Functions
    ***********************/
@@ -37,11 +37,34 @@ function($rootScope, Place, $scope, console) {
    * Events
    ***********************/
   $scope.$watch('addMode', function(newValue) {
-    console.log('$scope - addMode '+newValue);
+    console.info('MiamCtrl - addMode');
     $rootScope.$broadcast('addMode', newValue);
   });
 
-  /*$rootScope.$safeApply = function($scope, fn) {
+  $scope.$on('markerAdded', function(e, lat, lng) {
+    console.info('MiamCtrl - markerAdded scope');
+    var place = {
+      lat: lat,
+      lng: lng
+    };
+    $scope.editPlace(place);
+  });
+
+  $scope.$on('placeEditSave', function(e, place) {
+    console.info('MiamCtrl - placeEditSave');
+    console.info(place);
+    if(place.id) {
+      $rootScope.$broadcast('placeEdited', place);
+    }
+    else {
+      // TODO : manage with factory
+      place.id = 42;
+      $scope.addMode = false;
+      $rootScope.$broadcast('placeAdded', place);
+    }
+  });
+
+  $rootScope.$safeApply = function($scope, fn) {
     console.info('$rootScope - $safeApply()');
     $scope = $scope || $rootScope;
     fn = fn || function() {};
@@ -49,9 +72,9 @@ function($rootScope, Place, $scope, console) {
       fn();
     }
     else {
-      $scope.apply(fn);
+      $scope.$apply(fn);
     }
-  };*/
+  };
 }];
 
 /***********************
@@ -60,7 +83,7 @@ function($rootScope, Place, $scope, console) {
 var PlacesListCtrl = ['$scope', 'console',
 function($scope, console) {
   $scope.selectedPlaceId = null;
-  
+
   $scope.$on('placeSelected', function(e, place) {
     console.info('PlacesListCtrl - placeSelected');
     $scope.selectedPlaceId = place !== null ? place.id : null;
@@ -99,6 +122,7 @@ function($scope, $element, $rootScope, console) {
     console.info('PlaceEditCtrl - placeEdit');
     $scope.editPlace = place;
     $scope.formPlace = angular.copy(place);
+    $scope.$safeApply($scope);
     $element.on('hide', $scope.cancelFunc);
     $element.modal('show');
   });
@@ -117,15 +141,15 @@ function($scope, $element, $rootScope, console) {
     angular.extend($scope.editPlace, $scope.formPlace);
     $element.off('hide', $scope.cancelFunc);
     $element.modal('hide');
-    $rootScope.$broadcast('placeEdited', $scope.editPlace);
+    $rootScope.$broadcast('placeEditSave', $scope.editPlace);
   };
 }];
 
 /***********************
  * Map Controller
  ***********************/
-var MapCtrl = ['$scope', '$compile', '$templateCache', '$filter', 'console',
-function($scope, $compile, $templateCache, $filter, console) {
+var MapCtrl = ['$scope', '$compile', '$templateCache', '$filter', 'console', '$rootScope',
+function($scope, $compile, $templateCache, $filter, console, $rootScope) {
   $scope.markers = [];
   $scope.selectedPlace = null;
 
@@ -138,8 +162,73 @@ function($scope, $compile, $templateCache, $filter, console) {
   });
 
   /***********************
+   * State management
+   ***********************/
+  var viewState = {
+    init: function(scope) {
+      console.info('MapCtrl viewState - init');
+      this.map = scope.map;
+      this.scope = scope;
+      if(scope.infoWindow)
+        scope.infoWindow.close();
+      this.map.setOptions({
+        draggableCursor: 'url(http://maps.gstatic.com/mapfiles/openhand_8_8.cur) 8 8, default'
+      });
+    },
+
+    handleClick: function() {
+      console.info('MapCtrl viewState - handleClick');
+    },
+
+    destroy: function(scope) {
+      console.info('MapCtrl viewState - destroy');
+    }
+  };
+
+  var addState = {
+    init: function(scope) {
+      console.info('MapCtrl addState - init');
+      this.map = scope.map;
+      this.scope = scope;
+      this.map.setOptions({
+        draggableCursor: 'crosshair'
+      });
+    },
+
+    handleClick: function(latLng) {
+      console.info('MapCtrl addState - handleClick');
+      if(this.tmpMarker)
+        this.tmpMarker.setMap(null);
+      this.tmpMarker = new google.maps.Marker({
+          position: latLng,
+          map: this.map
+      });
+      // FIXME : Should not use $rootScope here
+      $rootScope.$broadcast('markerAdded', latLng.lat(), latLng.lng());
+    },
+
+    destroy: function(scope) {
+      console.info('MapCtrl addState - destroy');
+      if(this.tmpMarker)
+        this.tmpMarker.setMap(null);
+      this.tmpMarker = null;
+    }
+  };
+
+  $scope.state = viewState;
+
+  /***********************
    * Events
    ***********************/
+  $scope.$on('mapInitialized', function(e, map) {
+    console.info('MapCtrl - mapInitialized');
+    $scope.map = map;
+    $scope.state.init($scope);
+    google.maps.event.addListener(map, 'click', function(e) {
+      $scope.state.handleClick(e.latLng);
+    });
+  });
+
   $scope.$on('placeAdded', function(e, place) {
     console.info('MapCtrl - placeAdded');
     $scope.addPlaceMarker(place);
@@ -151,9 +240,9 @@ function($scope, $compile, $templateCache, $filter, console) {
     marker.setIcon('assets/img/icons/places/pointer/' + place.type + '.png');
     // Close and open infoWindow in order to readjust its size
     $scope.infoWindow.close();
-    $scope.infoWindow.open($scope.map, marker);
+    $scope.infoWindow.open(this.map, marker);
   });
-  
+
   $scope.$on('placeSelected', function(e, place) {
     console.info('MapCtrl - placeSelected');
 
@@ -168,7 +257,7 @@ function($scope, $compile, $templateCache, $filter, console) {
       return;
 
     $compile($scope.infoWindow.getContent())($scope);
-    
+
     for(var i=0 ; i<$scope.markers.length ; i++) {
       if($scope.markers[i].place.id === place.id) {
         $scope.infoWindow.open($scope.map, $scope.findPlaceMarker(place));
@@ -200,6 +289,13 @@ function($scope, $compile, $templateCache, $filter, console) {
 
   $scope.$on('addMode', function(e, addMode) {
     console.info('MapCtrl - addMode');
+    if($scope.state) {
+      $scope.state.destroy($scope);
+    }
+    $scope.state = addMode ? addState : viewState;
+    if($scope.map) {
+      $scope.state.init($scope);
+    }
   });
 
   /***********************
@@ -207,7 +303,7 @@ function($scope, $compile, $templateCache, $filter, console) {
    ***********************/
   /**
    * Adds a marker on the map
-   * 
+   *
    * @param Place place the place to add
    */
   $scope.addPlaceMarker = function(place) {
@@ -228,7 +324,7 @@ function($scope, $compile, $templateCache, $filter, console) {
 
   /**
    * Finds a marker on the map from a place
-   * 
+   *
    * @param Place place the place from which retrieve the map marker
    */
   $scope.findPlaceMarker = function(place) {
