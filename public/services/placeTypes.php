@@ -1,6 +1,6 @@
 <?php
 
-include(__DIR__.'/../lib/libs.php');
+include(__DIR__.'/../../lib/libs.php');
 
 $typeClass = new ReflectionClass('PlaceTypeEnum');
 $types = array();
