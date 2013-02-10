@@ -27,50 +27,61 @@ html, body, .row-fluid, #list, #map  {
   display: block;
 }
 
+/** Map **/
 #map {
   width: 76.595744680851066%;
   margin-left: 0;
-  /*display: inline-block;*/
+  position:relative;
 }
 
-#map .map {
-  width: 100%;
-  height: 100%;
-}
-
-@media (min-width: 1200px) {
-  #map {
-   width: 76.923076923076923%;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 979px) {
-  #map {
-   width: 77.07182320441989%;
-  }
-}
-
-@media (max-width: 767px) {
-  html, body {
-    padding: 0;
+  #map .map-search {
+    position: absolute;
+    z-index: 999;
   }
 
-  #map {
-   width: 100%;
-   margin-left: 0;
+  #map .map-search i.icon-search {
+    margin-left: -20px;
+    vertical-align: 2px;
   }
-  
-}
 
-/* Fix for Google Maps with Twitter bootstrap */
-#map img {
-  max-width: none; 
-}
+  #map .map {
+    width: 100%;
+    height: 100%;
+  }
 
-#map .infoWindow h3 {
-  line-height: 37px;
-}
+  @media (min-width: 1200px) {
+    #map {
+     width: 76.923076923076923%;
+    }
+  }
 
-#map .infoWindow h3 img {
-  vertical-align: text-bottom;
-}
+  @media (min-width: 768px) and (max-width: 979px) {
+    #map {
+     width: 77.07182320441989%;
+    }
+  }
+
+  @media (max-width: 767px) {
+    html, body {
+      padding: 0;
+    }
+
+    #map {
+     width: 100%;
+     margin-left: 0;
+    }
+
+  }
+
+  /* Fix for Google Maps with Twitter bootstrap */
+  #map img {
+    max-width: none;
+  }
+
+  #map .infoWindow h3 {
+    line-height: 37px;
+  }
+
+  #map .infoWindow h3 img {
+    vertical-align: text-bottom;
+  }
