@@ -38,7 +38,7 @@
           <a class="brand" href="#">Miam</a>
           <div class="nav-collapse collapse">
             <p class="navbar-text pull-right">
-              <input type="button" toggle-button="addMode" class="btn btn-primary" value="Add mode" />
+              <input type="button" toggle-button="addMode" class="btn btn-primary" value="Add mode" data-popover-placement="'bottom'" data-popover-title="Click on the map to add a new place" />
             </p>
             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
@@ -55,7 +55,7 @@
         <div id="list" class="span3">
           <div class="well sidebar-nav">
             <div ng-controller="SearchCtrl">
-              Search: <input ng-model="placeFilter.$" />
+              Search: <input ng-model="placeFilter.$" placeholder="Search in the list" />
               <br />
               Type : <select ng-model="placeFilter.type" ng-options="placeType.identifier as placeType.name for placeType in placeTypes">
                 <option value="">-- filter by place type --</option>
@@ -82,7 +82,6 @@
               <li><a href="#">Link</a></li>
               <li><a href="#">Link</a></li-->
             </ul>
-            <input type="button" class="btn" value="Add" ng-click="addPlace()" />
           </div><!--/.well -->
         </div><!--/span-->
         <div id="map" class="span9" ng-controller="MapCtrl">

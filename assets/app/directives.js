@@ -4,13 +4,19 @@ miamApp
   function(console) {
     return function(scope, element, attrs) {
       console.info('toggleButton');
+      if(element.data('popover-title'))
+        element.popover({animation:true, placement:'bottom', trigger:'manual', title: element.data('popover-title')});
 
       scope.$watch(attrs.toggleButton, function(active) {
         console.info('toggleButton $watch');
-        if(active)
+        if(active) {
           element.addClass('active');
-        else
+          element.popover('show');
+        }
+        else {
           element.removeClass('active');
+          element.popover('hide');
+        }
       });
 
       element.bind('click', function() {
