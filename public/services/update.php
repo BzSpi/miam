@@ -1,6 +1,6 @@
 <?php
 
-include(__DIR__.'/../../lib/libs.php');
+require_once(__DIR__.'/../../lib/libs.php');
 
 $postdata = file_get_contents("php://input");
 

@@ -20,7 +20,7 @@ $mapConfig  = $config['map'];
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
   </head>
 
@@ -107,7 +107,7 @@ $mapConfig  = $config['map'];
             <label class="control-label" for="name">Name</label>
             <div class="controls">
               <input type="text" id="name" name="name" required placeholder="" class="input-xlarge" data-ng-model="formPlace.name">
-              <p class="help-block">Username can contain any letters or numbers, without spaces</p>
+              <!--p class="help-block">Username can contain any letters or numbers, without spaces</p-->
             </div>
           </div>
 
@@ -116,7 +116,7 @@ $mapConfig  = $config['map'];
             <label class="control-label" for="description">Description</label>
             <div class="controls">
               <textarea id="description" name="description" required placeholder="" class="input-xlarge" data-ng-model="formPlace.description"></textarea>
-              <p class="help-block">Please provide your E-mail</p>
+              <!--p class="help-block">Please provide your E-mail</p-->
             </div>
           </div>
 
@@ -125,7 +125,7 @@ $mapConfig  = $config['map'];
             <label class="control-label" for="link">Link</label>
             <div class="controls">
               <input type="text" id="link" name="link" placeholder="" class="input-xlarge" data-ng-model="formPlace.link">
-              <p class="help-block">Password should be at least 4 characters</p>
+              <!--p class="help-block">Password should be at least 4 characters</p-->
             </div>
           </div>
 
@@ -134,13 +134,13 @@ $mapConfig  = $config['map'];
             <label class="control-label" for="type">Type</label>
             <div class="controls">
               <select id="type" name="type" data-ng-model="formPlace.placeTypeId" data-ng-options="placeType.id as placeType.name for placeType in placeTypes"></select>
-              <p class="help-block">Please confirm password</p>
+              <!--p class="help-block">Please confirm password</p-->
             </div>
           </div>
         </fieldset>
       </div>
       <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn" data-dismiss="modal">Close</button>
         <button class="btn btn-primary" data-ng-disabled="editForm.$invalid" data-ng-click="save()">Save changes</button>
       </div>
     </form>

@@ -1,6 +1,6 @@
 <?php
 
-include(__DIR__.'/../../lib/libs.php');
+require_once(__DIR__.'/../../lib/libs.php');
 
 $pm = new PlaceManager();
 $types = $pm->listPlaceTypes();
