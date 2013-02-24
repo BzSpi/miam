@@ -54,16 +54,24 @@ function($rootScope, Place, $scope, console) {
     console.info('MiamCtrl - placeEditSave');
     console.info(place);
     if(place.id) {
-      $rootScope.$broadcast('placeEdited', place);
+      Place.update(place, function(place) {
+        console.info('Place.update() success');
+        $rootScope.$broadcast('placeEdited', place);
+      });
     }
     else {
-      // TODO : manage with factory
-      place.id = 42;
-      $scope.addMode = false;
-      $rootScope.$broadcast('placeAdded', place);
+      Place.add(place, function(place) {
+        console.info('Place.add() success');
+        $scope.addMode = false;
+        $rootScope.places.push(place);
+        $rootScope.$broadcast('placeAdded', place);
+      });
     }
   });
 
+  /**
+   * @see http://www.yearofmoo.com/2012/10/more-angularjs-magic-to-supercharge-your-webapp.html#apply-digest-and-phase
+   */
   $rootScope.$safeApply = function($scope, fn) {
     console.info('$rootScope - $safeApply()');
     $scope = $scope || $rootScope;
@@ -180,7 +188,7 @@ function($scope, $compile, $templateCache, $filter, console, $rootScope) {
       console.info('MapCtrl viewState - handleClick');
     },
 
-    destroy: function(scope) {
+    destroy: function() {
       console.info('MapCtrl viewState - destroy');
     }
   };
@@ -237,10 +245,12 @@ function($scope, $compile, $templateCache, $filter, console, $rootScope) {
   $scope.$on('placeEdited', function(e, place) {
     console.info('MapCtrl - placeEdited');
     var marker = $scope.findPlaceMarker(place);
-    marker.setIcon('assets/img/icons/places/pointer/' + place.type + '.png');
-    // Close and open infoWindow in order to readjust its size
+    marker.setIcon('assets/img/icons/places/pointer/' + place.type.label + '.png');
+    // Update infoWindow and re-open it in order to readjust its size
     $scope.infoWindow.close();
-    $scope.infoWindow.open(this.map, marker);
+    $scope.selectedPlace = place;
+    $compile($scope.infoWindow.getContent())($scope);
+    $scope.infoWindow.open($scope.map, marker);
   });
 
   $scope.$on('placeSelected', function(e, place) {
@@ -260,7 +270,9 @@ function($scope, $compile, $templateCache, $filter, console, $rootScope) {
 
     for(var i=0 ; i<$scope.markers.length ; i++) {
       if($scope.markers[i].place.id === place.id) {
-        $scope.infoWindow.open($scope.map, $scope.findPlaceMarker(place));
+        var marker = $scope.findPlaceMarker(place);
+        $scope.infoWindow.open($scope.map, marker);
+        $scope.map.setCenter(marker.getPosition());
         break;
       }
     }
@@ -312,7 +324,7 @@ function($scope, $compile, $templateCache, $filter, console, $rootScope) {
           position: new google.maps.LatLng(place.lat, place.lng),
           map: $scope.map,
           title: place.name,
-          icon: 'assets/img/icons/places/pointer/' + place.type + '.png',
+          icon: 'assets/img/icons/places/pointer/' + place.type.label + '.png',
           shadow: 'assets/img/icons/places/pointer/shadow.png'
     });
     google.maps.event.addListener(marker, 'click', function() {

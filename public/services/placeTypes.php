@@ -2,14 +2,7 @@
 
 include(__DIR__.'/../../lib/libs.php');
 
-$typeClass = new ReflectionClass('PlaceTypeEnum');
-$types = array();
-foreach($typeClass->getConstants() as $cst)
-{
-  $types[] = (object) array(
-    'identifier' => $cst,
-    'name'       => ucfirst($cst)
-  );
-}
+$pm = new PlaceManager();
+$types = $pm->listPlaceTypes();
 
-echo json_encode(array_values($types));
+echo json_encode(array_map(function($t) { return $t->toSerializableObject(); }, $types));

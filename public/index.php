@@ -1,4 +1,10 @@
-<!DOCTYPE html>
+<?php
+
+require_once(__DIR__.'/../config/config.php');
+
+$mapConfig  = $config['map'];
+
+?><!DOCTYPE html>
 <html lang="en" data-ng-app="miam">
   <head>
     <meta charset="utf-8">
@@ -50,13 +56,13 @@
             <div data-ng-controller="SearchCtrl">
               Search: <input data-ng-model="placeFilter.$" placeholder="Search in the list" />
               <br />
-              Type : <select data-ng-model="placeFilter.type" data-ng-options="placeType.identifier as placeType.name for placeType in placeTypes">
+              Type : <select data-ng-model="placeFilter.type" data-ng-options="placeType.id as placeType.name for placeType in placeTypes">
                 <option value="">-- filter by place type --</option>
               </select>
             </div>
             <ul class="nav nav-list" data-ng-controller="PlacesListCtrl">
               <li data-ng-repeat="place in places | filter:placeFilter" data-ng-class-even="'even'" data-ng-class-odd="'odd'" data-ng-class="{ active: place.id == selectedPlaceId }">
-                <a href="#/places/{{place.id}}" data-ng-click="selectPlace(place)"><img src="" data-ng-src="assets/img/icons/places/classic/{{place.type}}.png" alt="{{ place.type }}" /> {{ place.name }} <small>{{ place.type }}</small></a>
+                <a href="#/places/{{place.id}}" data-ng-click="selectPlace(place)"><img src="" data-ng-src="assets/img/icons/places/classic/{{place.type.label}}.png" alt="{{ place.type.name }}" /> {{ place.name }} <small>{{ place.type.name }}</small></a>
               </li>
             </ul>
           </div><!--/.well -->
@@ -65,11 +71,14 @@
           <!--div class="map-search">
             <input type="text" google-map-search="" placeholder="Search on the map" class="span4" /><i class="icon-search"></i>
           </div-->
-          <div class="map" data-google-map="map" data-map-center-lat="-34.397" data-map-center-lng="150.644" data-map-center-zoom="14" data-map-center-geoloc="true"></div>
+          <div class="map" data-google-map="map" data-map-center-lat="<?php echo $mapConfig['center']['lat'] ?>" data-map-center-lng="<?php echo $mapConfig['center']['lng'] ?>" data-map-center-zoom="14" data-map-center-geoloc="true"></div>
           <script type="text/ng-template" id="infoWindow">
             <div class="infoWindow">
               <div class="modal-header">
-                <h3><img ng-src="assets/img/icons/places/classic/{{selectedPlace.type}}.png" alt="{{ selectedPlace.type }}" /> {{ selectedPlace.name }}</h3>
+                <h3>
+                  <img ng-src="assets/img/icons/places/classic/{{selectedPlace.type.label}}.png" alt="{{ selectedPlace.type.name }}" />
+                  {{ selectedPlace.name }}
+                </h3>
               </div>
               <div class="modal-body">
                 <p>{{ selectedPlace.description }}</p>
@@ -124,7 +133,7 @@
             <!-- Type -->
             <label class="control-label" for="type">Type</label>
             <div class="controls">
-              <select id="type" name="type" data-ng-model="formPlace.type" data-ng-options="placeType.identifier as placeType.name for placeType in placeTypes"></select>
+              <select id="type" name="type" data-ng-model="formPlace.placeTypeId" data-ng-options="placeType.id as placeType.name for placeType in placeTypes"></select>
               <p class="help-block">Please confirm password</p>
             </div>
           </div>
