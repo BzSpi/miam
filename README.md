@@ -13,11 +13,12 @@ Done
 
 Todo
 -------------------------
-- Authentication
-- Mongodb database connection
 - Real skinning
+- Authentication
+- Change name ;-)
 - Allow to manage other types than restaurants
   - roller spots first !
-- Administration site
+- Administration site ?
+- Mongodb database connection
 - Change standard PHP by something else (Ruby, NodeJs, Symfony 2 ...)
 - Skin management
