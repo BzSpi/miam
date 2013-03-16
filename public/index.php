@@ -39,11 +39,11 @@ $mapConfig  = $config['map'];
             <p class="navbar-text pull-right">
               <input type="button" data-toggle-button="addMode" class="btn btn-primary" value="Add mode" data-popover-placement="'bottom'" data-popover-title="Click on the map to add a new place" />
             </p>
-            <ul class="nav">
+            <!--ul class="nav">
               <li class="active"><a href="#">Home</a></li>
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li>
-            </ul>
+            </ul-->
           </div><!--/.nav-collapse -->
         </div>
       </div>
@@ -54,9 +54,11 @@ $mapConfig  = $config['map'];
         <div id="list" class="span3">
           <div class="well sidebar-nav">
             <div data-ng-controller="SearchCtrl">
-              Search: <input data-ng-model="placeFilter.$" placeholder="Search in the list" />
+              <label for="searchFilter">Search:</label>
+              <input id="searchFilter" data-ng-model="placeFilter.$" placeholder="Search in the list" />
               <br />
-              Type : <select data-ng-model="placeFilter.type" data-ng-options="placeType.id as placeType.name for placeType in placeTypes">
+              <label for="placeTypeFilter">Type:</label>
+              <select id="placeTypeFilter" data-ng-model="placeFilter.type" data-ng-options="placeType.id as placeType.name for placeType in placeTypes">
                 <option value="">-- filter by place type --</option>
               </select>
             </div>
