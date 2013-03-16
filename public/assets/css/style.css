@@ -7,6 +7,19 @@ html, body, .row-fluid, #list, #map  {
   position: absolute;
 }
 
+#navbar .pull-right .popover {
+  width: auto;
+  line-height: 1;
+}
+
+#navbar .pull-right .popover .popover-title {
+  display: none;
+}
+
+#navbar .pull-right .popover .popover-content {
+  white-space: nowrap;
+}
+
 #container {
   height: 100%;
   padding: 41px 0 0 0;
@@ -21,6 +34,10 @@ html, body, .row-fluid, #list, #map  {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
+}
+
+#list .sidebar-nav .input-large {
+  width: 95%;
 }
 
 #list .nav-list .odd {

@@ -37,7 +37,7 @@ $mapConfig  = $config['map'];
           <a class="brand" href="#">Miam!</a>
           <div class="nav-collapse collapse">
             <p class="navbar-text pull-right">
-              <input type="button" data-toggle-button="addMode" class="btn btn-primary" value="Add mode" data-popover-placement="'bottom'" data-popover-title="Click on the map to add a new place" />
+              <input type="button" data-toggle-button="addMode" class="btn btn-primary" value="Add a new place" data-popover-placement="left" data-popover-content="Click on the map to add a new place" />
             </p>
             <!--ul class="nav">
               <li class="active"><a href="#">Home</a></li>
@@ -53,15 +53,22 @@ $mapConfig  = $config['map'];
       <div class="row-fluid">
         <div id="list" class="span3">
           <div class="well sidebar-nav">
-            <div data-ng-controller="SearchCtrl">
-              <label for="searchFilter">Search:</label>
-              <input id="searchFilter" data-ng-model="placeFilter.$" placeholder="Search in the list" />
-              <br />
-              <label for="placeTypeFilter">Type:</label>
-              <select id="placeTypeFilter" data-ng-model="placeFilter.type" data-ng-options="placeType.id as placeType.name for placeType in placeTypes">
-                <option value="">-- filter by place type --</option>
-              </select>
-            </div>
+            <fieldset class="form-inline" data-ng-controller="SearchCtrl">
+              <div class="control-group">
+                <label class="control-label" for="searchFilter">Search:</label>
+                <div class="controls">
+                  <input id="searchFilter" type="text" class="input-large" data-ng-model="placeFilter.$" placeholder="Search in the list" />
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="placeTypeFilter">Type:</label>
+                <div class="controls">
+                  <select id="placeTypeFilter" class="input-large" data-ng-model="placeFilter.type" data-ng-options="placeType.id as placeType.name for placeType in placeTypes">
+                    <option value="">-- filter by place type --</option>
+                  </select>
+                </div>
+              </div>
+            </fieldset>
             <ul class="nav nav-list" data-ng-controller="PlacesListCtrl">
               <li data-ng-repeat="place in places | filter:placeFilter" data-ng-class-even="'even'" data-ng-class-odd="'odd'" data-ng-class="{ active: place.id == selectedPlaceId }">
                 <a href="#/places/{{place.id}}" data-ng-click="selectPlace(place)"><img src="" data-ng-src="assets/img/icons/places/classic/{{place.type.label}}.png" alt="{{ place.type.name }}" /> {{ place.name }} <small>{{ place.type.name }}</small></a>
@@ -135,7 +142,7 @@ $mapConfig  = $config['map'];
             <!-- Type -->
             <label class="control-label" for="type">Type</label>
             <div class="controls">
-              <select id="type" name="type" data-ng-model="formPlace.placeTypeId" data-ng-options="placeType.id as placeType.name for placeType in placeTypes"></select>
+              <select id="type" name="type" class="input-xlarge" data-ng-model="formPlace.placeTypeId" data-ng-options="placeType.id as placeType.name for placeType in placeTypes"></select>
               <!--p class="help-block">Please confirm password</p-->
             </div>
           </div>
