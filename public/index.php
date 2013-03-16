@@ -26,7 +26,7 @@ $mapConfig  = $config['map'];
 
   <body data-ng-controller="MiamCtrl">
 
-    <div id="navbar" class="navbar navbar-inverse navbar-fixed-top">
+    <div id="navbar" class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
           <!--a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -50,34 +50,37 @@ $mapConfig  = $config['map'];
     <div id="container" class="container-fluid">
       <div class="row-fluid">
         <div id="list" class="span3">
-          <div class="well sidebar-nav">
+          <div class="sidebar-nav">
             <fieldset class="form-inline" data-ng-controller="SearchCtrl">
               <div class="control-group">
                 <label class="control-label" for="searchFilter">Search:</label>
-                <div class="controls">
-                  <input id="searchFilter" type="text" class="input-large" data-ng-model="placeFilter.$" placeholder="Search in the list" />
-                </div>
+                <input id="searchFilter" type="text" class="input-large" data-ng-model="placeFilter.$" placeholder="Search in the list" />
               </div>
               <div class="control-group">
                 <label class="control-label" for="placeTypeFilter">Type:</label>
-                <div class="controls">
-                  <select id="placeTypeFilter" class="input-large" data-ng-model="placeFilter.type" data-ng-options="placeType.id as placeType.name for placeType in placeTypes">
-                    <option value="">-- filter by place type --</option>
-                  </select>
-                </div>
+                <select id="placeTypeFilter" class="input-large" data-ng-model="placeFilter.type" data-ng-options="placeType.id as placeType.name for placeType in placeTypes">
+                  <option value="">-- filter by place type --</option>
+                </select>
               </div>
+              <!--div class="control-group">
+                <input type="checkbox" id="placeVisibilityFilter" data-ng-model="placeFilter.onlyVisible" value="1" />
+                <label class="control-label" for="placeVisibilityFilter">List only visible places</label>
+              </div-->
             </fieldset>
             <ul class="nav nav-list" data-ng-controller="PlacesListCtrl">
               <li data-ng-repeat="place in places | filter:placeFilter" data-ng-class-even="'even'" data-ng-class-odd="'odd'" data-ng-class="{ active: place.id == selectedPlaceId }">
-                <a href="#/places/{{place.id}}" data-ng-click="selectPlace(place)"><img src="" data-ng-src="assets/img/icons/places/classic/{{place.type.label}}.png" alt="{{ place.type.name }}" /> {{ place.name }} <small>{{ place.type.name }}</small></a>
+                <a class="clearfix" href="#/places/{{place.id}}" data-ng-click="selectPlace(place)">
+                  <img src="assets/img/blank.gif" width="32" height="37" data-ng-src="assets/img/icons/places/classic/{{place.type.label}}.png" alt="{{ place.type.name }}" />
+                  <span class="text">
+                    <span data-ng-bind="place.name"></span>
+                    <small data-ng-bind="place.type.name"></small>
+                  </span>
+                </a>
               </li>
             </ul>
-          </div><!--/.well -->
+          </div><!--/.sidebar-nav -->
         </div><!--/span-->
         <div id="map" class="span9" data-ng-controller="MapCtrl">
-          <!--div class="map-search">
-            <input type="text" google-map-search="" placeholder="Search on the map" class="span4" /><i class="icon-search"></i>
-          </div-->
           <div class="map" data-google-map="map" data-map-center-lat="<?php echo $mapConfig['center']['lat'] ?>" data-map-center-lng="<?php echo $mapConfig['center']['lng'] ?>" data-map-center-zoom="14" data-map-center-geoloc="true"></div>
           <script type="text/ng-template" id="infoWindow">
             <div class="infoWindow">
@@ -92,7 +95,6 @@ $mapConfig  = $config['map'];
                 <a ng-show="selectedPlace.link != ''" href="{{ selectedPlace.link }}" target="_blank">{{ selectedPlace.link }}</a>
               </div>
               <div class="modal-footer">
-                <!--a href="#" class="btn">Close</a-->
                 <a href="#" class="btn btn-primary" ng-click="editPlace(selectedPlace)">Edit</a>
               </div>
             </div>
@@ -100,6 +102,14 @@ $mapConfig  = $config['map'];
         </div><!--/span-->
       </div><!--/row-->
     </div><!--/.fluid-container-->
+
+    <div id="footer" class="navbar navbar-fixed-bottom">
+      <div class="navbar-inner">
+        <div class="pull-right">
+          <a class="copyright" href="https://github.com/BzSpi/miam">Clone me on GitHub</a>
+        </div>
+      </div>
+    </div>
 
     <!-- Modal -->
     <form name="editForm" data-ng-controller="PlaceEditCtrl" class="modal hide fade form-horizontal" action="" method="POST" tabindex="-1" role="dialog">
@@ -114,7 +124,6 @@ $mapConfig  = $config['map'];
             <label class="control-label" for="name">Name</label>
             <div class="controls">
               <input type="text" id="name" name="name" required placeholder="" class="input-xlarge" data-ng-model="formPlace.name">
-              <!--p class="help-block">Username can contain any letters or numbers, without spaces</p-->
             </div>
           </div>
 
@@ -122,8 +131,7 @@ $mapConfig  = $config['map'];
             <!-- Description -->
             <label class="control-label" for="description">Description</label>
             <div class="controls">
-              <textarea id="description" name="description" required placeholder="" class="input-xlarge" data-ng-model="formPlace.description"></textarea>
-              <!--p class="help-block">Please provide your E-mail</p-->
+              <textarea id="description" name="description" required placeholder="" class="input-xlarge" rows="5" data-ng-model="formPlace.description"></textarea>
             </div>
           </div>
 
@@ -132,7 +140,6 @@ $mapConfig  = $config['map'];
             <label class="control-label" for="link">Link</label>
             <div class="controls">
               <input type="text" id="link" name="link" placeholder="" class="input-xlarge" data-ng-model="formPlace.link">
-              <!--p class="help-block">Password should be at least 4 characters</p-->
             </div>
           </div>
 
@@ -141,7 +148,6 @@ $mapConfig  = $config['map'];
             <label class="control-label" for="type">Type</label>
             <div class="controls">
               <select id="type" name="type" class="input-xlarge" data-ng-model="formPlace.placeTypeId" data-ng-options="placeType.id as placeType.name for placeType in placeTypes"></select>
-              <!--p class="help-block">Please confirm password</p-->
             </div>
           </div>
         </fieldset>
@@ -159,6 +165,7 @@ $mapConfig  = $config['map'];
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.3/angular-resource.min.js"></script>
     <script src="//maps.googleapis.com/maps/api/js?sensor=true"></script>
+    <script src="assets/js/skin.js"></script>
     <script src="assets/app/app.js"></script>
     <script src="assets/app/services.js"></script>
     <script src="assets/app/directives.js"></script>

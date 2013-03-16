@@ -2,32 +2,51 @@ html, body, .row-fluid, #list, #map  {
   height: 100%;
 }
 
+select, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  height: 30px;
+}
+
+textarea {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+/** Navbar **/
 #navbar {
   margin: 0;
   position: absolute;
 }
 
-#navbar .pull-right .popover {
-  width: auto;
-  line-height: 1;
-}
+  #navbar .pull-right .btn {
+    margin-top: 0;
+  }
 
-#navbar .pull-right .popover .popover-title {
-  display: none;
-}
+  #navbar .pull-right .popover {
+    width: auto;
+    line-height: 1;
+  }
 
-#navbar .pull-right .popover .popover-content {
-  white-space: nowrap;
-}
+  #navbar .pull-right .popover .popover-title {
+    display: none;
+  }
+
+  #navbar .pull-right .popover .popover-content {
+    white-space: nowrap;
+  }
 
 #container {
   height: 100%;
-  padding: 41px 0 0 0;
+  padding: 41px 0 25px 0;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
 }
 
+/** Sidebar **/
 #list .sidebar-nav {
   height: 100%;
   margin: 0;
@@ -36,22 +55,60 @@ html, body, .row-fluid, #list, #map  {
   box-sizing: border-box;
 }
 
-#list .sidebar-nav .input-large {
-  width: 95%;
-}
+  #list .sidebar-nav fieldset {
+    padding: 15px;
+  }
 
-#list .nav-list .odd {
-  background-color: #f9f9f9;
-}
+  #list .sidebar-nav fieldset .control-group:last-child {
+    margin-bottom: 0;
+  }
 
-#list .nav-list img {
-  float: left;
-  margin-right: 10px;
-}
+  #list .sidebar-nav .input-large {
+    width: 95%;
+  }
 
-#list .nav-list small {
-  display: block;
-}
+  #list .sidebar-nav input[type="checkbox"] {
+    vertical-align: top;
+  }
+
+  #list .nav-list {
+    padding: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  #list .nav-list li {
+    padding: 0 5px;
+  }
+
+  #list .nav-list li.odd {
+    background-color: #f9f9f9;
+  }
+
+  #list .nav-list li a {
+    outline: none;
+  }
+
+  #list .nav-list li img {
+    float: left;
+    position: relative;
+    top: -10px;
+  }
+
+  #list .nav-list li .text {
+    margin-left: 5px;
+    float: left;
+    width: 85%;
+  }
+
+  #list .nav-list li .text small {
+    display: block;
+    color: #999999;
+  }
+
+  #list .nav-list li.active .text small {
+    color: #DDDDDD;
+  }
 
 /** Map **/
 #map {
@@ -111,3 +168,16 @@ html, body, .row-fluid, #list, #map  {
   #map .infoWindow h3 img {
     vertical-align: text-bottom;
   }
+  
+/** Footer **/
+/** Navbar **/
+#footer {
+  margin: 0;
+  position: absolute;
+}
+
+  #footer .navbar-inner {
+    min-height: auto;
+    padding: 2px 10px;
+  }
+
